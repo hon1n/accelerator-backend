@@ -182,7 +182,7 @@ func (repo *AuthRepo) RevokeSessionTx(ctx context.Context, tx pgx.Tx, jti string
 func (repo *AuthRepo) UpdateTempPassword(ctx context.Context, callerID, passwordHash string) error {
 	sqlQuery := `
 		UPDATE users
-		SET password_hash = $1
+		SET password_hash = $1, temporary_password = FALSE
 		WHERE id = $2;
 	`
 
