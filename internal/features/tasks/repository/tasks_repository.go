@@ -278,7 +278,7 @@ func (repo *TasksRepo) CreateTask(
 	sqlQuery := `
 	INSERT INTO tasks (user_id, group_id, task_name, description, meeting_date, pattern_id, file_path, file_name, status)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-	RETURNING id, group_id, task_name, description, meeting_date, pattern_id, file_name, status, created_at
+	RETURNING id, group_id, task_name, description, meeting_date::text, pattern_id, file_name, status, created_at
 	`
 	var task domains.Task
 
@@ -311,7 +311,7 @@ func (repo *TasksRepo) CreateTask(
 func (repo *TasksRepo) SelectTaskByID(ctx context.Context, taskID string) (*domains.Task, error) {
 	query := `
         SELECT 
-            id, user_id, group_id, task_name, description, meeting_date,
+            id, user_id, group_id, task_name, description, meeting_date::text,
             pattern_id, file_path, file_name, duration, status, result_json,
             stage_entered_at, created_at, updated_at, started_at, completed_at
         FROM tasks
@@ -378,7 +378,7 @@ func (repo *TasksRepo) GetTasksByGroupID(ctx context.Context, groupID string, pa
 
 	// Базовый запрос без пагинации
 	baseQuery := `
-        SELECT id, user_id, group_id, task_name, description, meeting_date,
+        SELECT id, user_id, group_id, task_name, description, meeting_date::text,
                pattern_id, file_path, file_name, duration, status, result_json,
                stage_entered_at, created_at, updated_at, started_at, completed_at
         FROM tasks
@@ -518,7 +518,7 @@ func (repo *TasksRepo) EditTask(ctx context.Context, taskID string, editInfo map
 	query := fmt.Sprintf(`
         UPDATE tasks SET %s, updated_at = NOW()
         WHERE id = $%d
-        RETURNING id, user_id, group_id, task_name, description, meeting_date,
+        RETURNING id, user_id, group_id, task_name, description, meeting_date::text,
         	pattern_id, file_path, file_name, duration, status, result_json,
         	stage_entered_at, created_at, updated_at, started_at, completed_at;
     `, strings.Join(setClauses, ", "), i)
